@@ -1,0 +1,1 @@
+<Project name="LcdSystem"><File path="main.c"></File><File path="Makefile"></File><File path="main.h"></File><File path="i2c.h"></File><File path="i2c.c"></File><File path="Usart.c"></File><File path="Usart.h"></File></Project>

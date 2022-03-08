@@ -1,0 +1,392 @@
+   1               		.file	"i2c.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	InitI2C
+  18               	InitI2C:
+  19               	.LFB7:
+  20               	.LM1:
+  21               	/* prologue: function */
+  22               	/* frame size = 0 */
+  23               	.LM2:
+  24 0000 81E0      		ldi r24,lo8(1)
+  25 0002 82B9      		out 34-32,r24
+  26               	.LM3:
+  27 0004 8AE0      		ldi r24,lo8(10)
+  28 0006 80B9      		out 32-32,r24
+  29               	.LM4:
+  30 0008 85EC      		ldi r24,lo8(-59)
+  31 000a 86BF      		out 86-32,r24
+  32               	/* epilogue start */
+  33               	.LM5:
+  34 000c 0895      		ret
+  35               	.LFE7:
+  37               	.global	interrupt_i2c
+  39               	interrupt_i2c:
+  40               	.LFB9:
+  41               	.LM6:
+  42               	/* prologue: function */
+  43               	/* frame size = 0 */
+  44               	.LM7:
+  45 000e 81B1      		in r24,33-32
+  46               	.LM8:
+  47 0010 887F      		andi r24,lo8(-8)
+  48 0012 8832      		cpi r24,lo8(40)
+  49 0014 01F0      		breq .L9
+  50 0016 8932      		cpi r24,lo8(41)
+  51 0018 00F4      		brsh .L14
+  52 001a 8031      		cpi r24,lo8(16)
+  53 001c 01F0      		breq .L8
+  54 001e 8131      		cpi r24,lo8(17)
+  55 0020 00F4      		brsh .L15
+  56 0022 8830      		cpi r24,lo8(8)
+  57 0024 01F0      		breq .+2
+  58 0026 00C0      		rjmp .L4
+  59 0028 00C0      		rjmp .L21
+  60               	.L15:
+  61 002a 8831      		cpi r24,lo8(24)
+  62 002c 01F0      		breq .L7
+  63 002e 8032      		cpi r24,lo8(32)
+  64 0030 01F0      		breq .+2
+  65 0032 00C0      		rjmp .L4
+  66 0034 00C0      		rjmp .L8
+  67               	.L14:
+  68 0036 8037      		cpi r24,lo8(112)
+  69 0038 01F4      		brne .+2
+  70 003a 00C0      		rjmp .L4
+  71 003c 8137      		cpi r24,lo8(113)
+  72 003e 00F4      		brsh .L16
+  73 0040 8033      		cpi r24,lo8(48)
+  74 0042 01F0      		breq .+2
+  75 0044 00C0      		rjmp .L4
+  76 0046 00C0      		rjmp .L8
+  77               	.L16:
+  78 0048 8039      		cpi r24,lo8(-112)
+  79 004a 01F0      		breq .L12
+  80 004c 803A      		cpi r24,lo8(-96)
+  81 004e 01F4      		brne .L4
+  82 0050 00C0      		rjmp .L22
+  83               	.L21:
+  84               	.LM9:
+  85 0052 1092 0000 		sts indexSen,__zero_reg__
+  86               	.L7:
+  87               	.LM10:
+  88 0056 13B8      		out 35-32,__zero_reg__
+  89 0058 00C0      		rjmp .L4
+  90               	.L8:
+  91               	.LM11:
+  92 005a 85EE      		ldi r24,lo8(-27)
+  93 005c 00C0      		rjmp .L20
+  94               	.L9:
+  95               	.LM12:
+  96 005e 9091 0000 		lds r25,indexSen
+  97 0062 8091 0000 		lds r24,SIZE
+  98 0066 9817      		cp r25,r24
+  99 0068 00F4      		brsh .L18
+ 100               	.LM13:
+ 101 006a E091 0000 		lds r30,indexSen
+ 102 006e F0E0      		ldi r31,lo8(0)
+ 103 0070 E050      		subi r30,lo8(-(i2cSendMessageBuf))
+ 104 0072 F040      		sbci r31,hi8(-(i2cSendMessageBuf))
+ 105 0074 8081      		ld r24,Z
+ 106 0076 83B9      		out 35-32,r24
+ 107               	.LM14:
+ 108 0078 8091 0000 		lds r24,indexSen
+ 109 007c 8F5F      		subi r24,lo8(-(1))
+ 110 007e 8093 0000 		sts indexSen,r24
+ 111 0082 00C0      		rjmp .L4
+ 112               	.L18:
+ 113               	.LM15:
+ 114 0084 81E0      		ldi r24,lo8(1)
+ 115 0086 8093 0000 		sts syncStartFlag,r24
+ 116               	.LM16:
+ 117 008a 85ED      		ldi r24,lo8(-43)
+ 118 008c 00C0      		rjmp .L20
+ 119               	.L12:
+ 120               	.LM17:
+ 121 008e E091 0000 		lds r30,indexRec
+ 122 0092 F0E0      		ldi r31,lo8(0)
+ 123 0094 83B1      		in r24,35-32
+ 124 0096 E050      		subi r30,lo8(-(i2cReceiveMessageBuf-1))
+ 125 0098 F040      		sbci r31,hi8(-(i2cReceiveMessageBuf-1))
+ 126 009a 8083      		st Z,r24
+ 127               	.LM18:
+ 128 009c 8091 0000 		lds r24,indexRec
+ 129 00a0 8F5F      		subi r24,lo8(-(1))
+ 130 00a2 8093 0000 		sts indexRec,r24
+ 131 00a6 00C0      		rjmp .L4
+ 132               	.L22:
+ 133               	.LM19:
+ 134 00a8 8091 0000 		lds r24,indexRec
+ 135 00ac 8150      		subi r24,lo8(-(-1))
+ 136 00ae 8093 0000 		sts indexRec,r24
+ 137               	.LM20:
+ 138 00b2 81E0      		ldi r24,lo8(1)
+ 139 00b4 8093 0000 		sts syncStartFlag,r24
+ 140               	.LM21:
+ 141 00b8 6091 0000 		lds r22,indexRec
+ 142 00bc 80E0      		ldi r24,lo8(i2cReceiveMessageBuf)
+ 143 00be 90E0      		ldi r25,hi8(i2cReceiveMessageBuf)
+ 144 00c0 70E0      		ldi r23,lo8(0)
+ 145 00c2 0E94 0000 		call getCommand
+ 146               	.LM22:
+ 147 00c6 1092 0000 		sts indexRec,__zero_reg__
+ 148               	.L4:
+ 149               	.LM23:
+ 150 00ca 85EC      		ldi r24,lo8(-59)
+ 151               	.L20:
+ 152 00cc 86BF      		out 86-32,r24
+ 153 00ce 0895      		ret
+ 154               	.LFE9:
+ 156               		.data
+ 157               	.LC0:
+ 158 0000 6D79 2061 		.string	"my address is "
+ 158      6464 7265 
+ 158      7373 2069 
+ 158      7320 00
+ 159               	.LC1:
+ 160 000f 6D61 7820 		.string	"max address is "
+ 160      6164 6472 
+ 160      6573 7320 
+ 160      6973 2000 
+ 161               		.text
+ 162               	.global	interrupt_config_i2c
+ 164               	interrupt_config_i2c:
+ 165               	.LFB8:
+ 166               	.LM24:
+ 167               	/* prologue: function */
+ 168               	/* frame size = 0 */
+ 169               	.LM25:
+ 170 00d0 9B9B      		sbis 51-32,3
+ 171 00d2 00C0      		rjmp .L24
+ 172               	.LM26:
+ 173 00d4 81E0      		ldi r24,lo8(1)
+ 174 00d6 8093 0000 		sts LeftFlag,r24
+ 175               	.L24:
+ 176               	.LM27:
+ 177 00da 81B1      		in r24,33-32
+ 178               	.LM28:
+ 179 00dc 887F      		andi r24,lo8(-8)
+ 180 00de 8832      		cpi r24,lo8(40)
+ 181 00e0 01F0      		breq .L29
+ 182 00e2 8932      		cpi r24,lo8(41)
+ 183 00e4 00F4      		brsh .L33
+ 184 00e6 8031      		cpi r24,lo8(16)
+ 185 00e8 01F4      		brne .+2
+ 186 00ea 00C0      		rjmp .L43
+ 187 00ec 8131      		cpi r24,lo8(17)
+ 188 00ee 00F4      		brsh .L34
+ 189 00f0 8830      		cpi r24,lo8(8)
+ 190 00f2 01F0      		breq .+2
+ 191 00f4 00C0      		rjmp .L25
+ 192 00f6 00C0      		rjmp .L44
+ 193               	.L34:
+ 194 00f8 8831      		cpi r24,lo8(24)
+ 195 00fa 01F0      		breq .L28
+ 196 00fc 8032      		cpi r24,lo8(32)
+ 197 00fe 01F0      		breq .+2
+ 198 0100 00C0      		rjmp .L25
+ 199 0102 00C0      		rjmp .L43
+ 200               	.L33:
+ 201 0104 8037      		cpi r24,lo8(112)
+ 202 0106 01F4      		brne .+2
+ 203 0108 00C0      		rjmp .L25
+ 204 010a 8137      		cpi r24,lo8(113)
+ 205 010c 00F4      		brsh .L35
+ 206 010e 8033      		cpi r24,lo8(48)
+ 207 0110 01F4      		brne .L25
+ 208 0112 00C0      		rjmp .L43
+ 209               	.L35:
+ 210 0114 8039      		cpi r24,lo8(-112)
+ 211 0116 01F0      		breq .L31
+ 212 0118 803A      		cpi r24,lo8(-96)
+ 213 011a 01F4      		brne .L25
+ 214 011c 00C0      		rjmp .L45
+ 215               	.L44:
+ 216               	.LM29:
+ 217 011e 81E0      		ldi r24,lo8(1)
+ 218 0120 8093 0000 		sts configStatingFlag,r24
+ 219               	.LM30:
+ 220 0124 13B8      		out 35-32,__zero_reg__
+ 221 0126 00C0      		rjmp .L25
+ 222               	.L28:
+ 223               	.LM31:
+ 224 0128 939A      		sbi 50-32,3
+ 225               	.LM32:
+ 226 012a 8091 0000 		lds r24,address
+ 227 012e 83B9      		out 35-32,r24
+ 228 0130 00C0      		rjmp .L25
+ 229               	.L29:
+ 230               	.LM33:
+ 231 0132 8091 0000 		lds r24,masterCount
+ 232 0136 8F5F      		subi r24,lo8(-(1))
+ 233 0138 8093 0000 		sts masterCount,r24
+ 234               	.LM34:
+ 235 013c 85ED      		ldi r24,lo8(-43)
+ 236 013e 86BF      		out 86-32,r24
+ 237               	.LM35:
+ 238 0140 1092 0000 		sts configTimeoutCounter,__zero_reg__
+ 239 0144 00C0      		rjmp .L36
+ 240               	.L31:
+ 241               	.LM36:
+ 242 0146 8091 0000 		lds r24,LeftFlag
+ 243 014a 8130      		cpi r24,lo8(1)
+ 244 014c 01F4      		brne .L37
+ 245 014e 8091 0000 		lds r24,masterCount
+ 246 0152 8823      		tst r24
+ 247 0154 01F4      		brne .L37
+ 248               	.LM37:
+ 249 0156 83B1      		in r24,35-32
+ 250 0158 8F5F      		subi r24,lo8(-(1))
+ 251 015a 8093 0000 		sts address,r24
+ 252 015e 00C0      		rjmp .L38
+ 253               	.L37:
+ 254               	.LM38:
+ 255 0160 9091 0000 		lds r25,maxAddress
+ 256 0164 83B1      		in r24,35-32
+ 257 0166 9817      		cp r25,r24
+ 258 0168 00F4      		brsh .L38
+ 259               	.LM39:
+ 260 016a 83B1      		in r24,35-32
+ 261 016c 8093 0000 		sts maxAddress,r24
+ 262               	.L38:
+ 263               	.LM40:
+ 264 0170 1092 0000 		sts configTimeoutCounter,__zero_reg__
+ 265 0174 00C0      		rjmp .L25
+ 266               	.L45:
+ 267               	.LM41:
+ 268 0176 8091 0000 		lds r24,LeftFlag
+ 269 017a 8130      		cpi r24,lo8(1)
+ 270 017c 01F4      		brne .L25
+ 271 017e 8091 0000 		lds r24,masterCount
+ 272 0182 8823      		tst r24
+ 273 0184 01F4      		brne .L25
+ 274               	.LM42:
+ 275 0186 1092 0000 		sts configTimeoutCounter,__zero_reg__
+ 276               	.L43:
+ 277               	.LM43:
+ 278 018a 85EE      		ldi r24,lo8(-27)
+ 279 018c 00C0      		rjmp .L42
+ 280               	.L25:
+ 281               	.LM44:
+ 282 018e 85EC      		ldi r24,lo8(-59)
+ 283               	.L42:
+ 284 0190 86BF      		out 86-32,r24
+ 285               	.L36:
+ 286               	.LM45:
+ 287 0192 9091 0000 		lds r25,maxAddress
+ 288 0196 8091 0000 		lds r24,address
+ 289 019a 8917      		cp r24,r25
+ 290 019c 00F0      		brlo .L40
+ 291               	.LM46:
+ 292 019e 8091 0000 		lds r24,address
+ 293 01a2 8093 0000 		sts maxAddress,r24
+ 294               	.L40:
+ 295               	.LM47:
+ 296 01a6 80E0      		ldi r24,lo8(.LC0)
+ 297 01a8 90E0      		ldi r25,hi8(.LC0)
+ 298 01aa 0E94 0000 		call Usart_PutString
+ 299               	.LM48:
+ 300 01ae 8091 0000 		lds r24,address
+ 301 01b2 805D      		subi r24,lo8(-(48))
+ 302 01b4 0E94 0000 		call Usart_PutChar
+ 303               	.LM49:
+ 304 01b8 8DE0      		ldi r24,lo8(13)
+ 305 01ba 0E94 0000 		call Usart_PutChar
+ 306               	.LM50:
+ 307 01be 8AE0      		ldi r24,lo8(10)
+ 308 01c0 0E94 0000 		call Usart_PutChar
+ 309               	.LM51:
+ 310 01c4 80E0      		ldi r24,lo8(.LC1)
+ 311 01c6 90E0      		ldi r25,hi8(.LC1)
+ 312 01c8 0E94 0000 		call Usart_PutString
+ 313               	.LM52:
+ 314 01cc 8091 0000 		lds r24,maxAddress
+ 315 01d0 805D      		subi r24,lo8(-(48))
+ 316 01d2 0E94 0000 		call Usart_PutChar
+ 317               	.LM53:
+ 318 01d6 8DE0      		ldi r24,lo8(13)
+ 319 01d8 0E94 0000 		call Usart_PutChar
+ 320               	.LM54:
+ 321 01dc 8AE0      		ldi r24,lo8(10)
+ 322 01de 0E94 0000 		call Usart_PutChar
+ 323               	.LM55:
+ 324 01e2 8091 0000 		lds r24,address
+ 325               	/* epilogue start */
+ 326               	.LM56:
+ 327 01e6 0895      		ret
+ 328               	.LFE8:
+ 330               	.global	maxAddress
+ 331               	.global	maxAddress
+ 332               		.section .bss
+ 335               	maxAddress:
+ 336 0000 00        		.skip 1,0
+ 337               	.global	masterCount
+ 338               	.global	masterCount
+ 341               	masterCount:
+ 342 0001 00        		.skip 1,0
+ 343               	.global	configTimeoutCounter
+ 344               	.global	configTimeoutCounter
+ 347               	configTimeoutCounter:
+ 348 0002 00        		.skip 1,0
+ 349               	.global	LeftFlag
+ 350               	.global	LeftFlag
+ 353               	LeftFlag:
+ 354 0003 00        		.skip 1,0
+ 355               	.global	LWPinDelayCounter
+ 356               	.global	LWPinDelayCounter
+ 359               	LWPinDelayCounter:
+ 360 0004 00        		.skip 1,0
+ 361               	.global	indexSen
+ 362               	.global	indexSen
+ 365               	indexSen:
+ 366 0005 00        		.skip 1,0
+ 367               	.global	indexRec
+ 368               	.global	indexRec
+ 371               	indexRec:
+ 372 0006 00        		.skip 1,0
+ 373               	.global	SIZE
+ 374               	.global	SIZE
+ 377               	SIZE:
+ 378 0007 00        		.skip 1,0
+ 379               		.data
+ 382               	address:
+ 383 001f 01        		.byte	1
+ 384               		.comm i2cSendMessageBuf,1,1
+ 385               		.comm i2cReceiveMessageBuf,1,1
+ 426               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 i2c.c
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:2      *ABS*:0000003f __SREG__
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:3      *ABS*:0000003e __SP_H__
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:4      *ABS*:0000003d __SP_L__
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:5      *ABS*:00000034 __CCP__
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:18     .text:00000000 InitI2C
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:39     .text:0000000e interrupt_i2c
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:365    .bss:00000005 indexSen
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:377    .bss:00000007 SIZE
+                            *COM*:00000001 i2cSendMessageBuf
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:371    .bss:00000006 indexRec
+                            *COM*:00000001 i2cReceiveMessageBuf
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:164    .text:000000d0 interrupt_config_i2c
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:353    .bss:00000003 LeftFlag
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:382    .data:0000001f address
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:341    .bss:00000001 masterCount
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:347    .bss:00000002 configTimeoutCounter
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:335    .bss:00000000 maxAddress
+C:\Users\mehrdad\AppData\Local\Temp/ccN4hBl3.s:359    .bss:00000004 LWPinDelayCounter
+
+UNDEFINED SYMBOLS
+syncStartFlag
+getCommand
+configStatingFlag
+Usart_PutString
+Usart_PutChar
+__do_copy_data
+__do_clear_bss
